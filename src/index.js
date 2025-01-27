@@ -77,9 +77,9 @@ emi.on('streamSessionIdReceived', () => {
 })
 
 const createStreamCon = () => {
-    let conAlive = false;
+    //let conAlive = false;
     const socket = new WebSocket(xApiStreamUrl);
-    streamConnections.push(socket);
+    //streamConnections.push(socket);
     socket.on('open', (data) => {
         console.log('Conexion establecida con: ', xApiStreamUrl);
         socket.send(JSON.stringify({
