@@ -1,4 +1,4 @@
 config
-node_modules
+./node_modules
 .gitgit signore
-backtesting
+./backtesting
