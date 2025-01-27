@@ -15,14 +15,12 @@ const symbol = 'US100';
 
 let streamSessionId = false;
 
-const streamConnections = [];
+
 
 
 
 const init = () => {
-    const socket = new WebSocket(xApiMainUrl, {
-        localAddress: '192.168.1.83'
-    });
+    const socket = new WebSocket(xApiMainUrl);
 
     socket.on('open', (data) => {
         console.log('Conexion establecida con: ', xApiMainUrl);
@@ -80,9 +78,7 @@ emi.on('streamSessionIdReceived', () => {
 
 const createStreamCon = () => {
     let conAlive = false;
-    const socket = new WebSocket(xApiStreamUrl, {
-        localAddress: '192.168.1.83'
-    });
+    const socket = new WebSocket(xApiStreamUrl);
     streamConnections.push(socket);
     socket.on('open', (data) => {
         console.log('Conexion establecida con: ', xApiStreamUrl);
@@ -178,7 +174,7 @@ emi.on('newTickPrice', (data) => {
         console.log('Conectado a la base de datos!');
 
         // Select para obtener el ID 
-        const query = 'SELECT id FROM symbol WHERE name = ?';
+        const query = 'SELECT id FROM Symbol WHERE name = ?';
         connection.query(query, [symbol], (err, results) => {
             if (err) {
                 console.error('Error en la consulta:', err);
@@ -187,7 +183,7 @@ emi.on('newTickPrice', (data) => {
 
             if (results.length > 0) {
                 symbolId = results[0].id;
-                console.log('El ID obtenido es:', symbolId);
+                //console.log('El ID obtenido es:', symbolId);
 
                 //INSERT INTO TickPrice
                 const query = `INSERT INTO TickPrice (id_symbol, ask_price, ask_volume, bid_price, bid_volume, price_level, high_price, low_price, quote_id, spread_raw, spread_table, timestamp) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -212,7 +208,6 @@ emi.on('newTickPrice', (data) => {
 
 emi.on('newCandle', (data) => {
     let symbolId;
-        console.log(data);
         const connection = mysql.createConnection({
             host: process.env.DB_HOST,
             user: process.env.DB_USER,
@@ -229,7 +224,7 @@ emi.on('newCandle', (data) => {
             console.log('Conectado a la base de datos!');
     
             // Select para obtener el ID 
-            const query = 'SELECT id FROM symbol WHERE name = ?';
+            const query = 'SELECT id FROM Symbol WHERE name = ?';
             connection.query(query, [symbol], (err, results) => {
                 if (err) {
                     console.error('Error en la consulta:', err);
@@ -238,7 +233,7 @@ emi.on('newCandle', (data) => {
     
                 if (results.length > 0) {
                     symbolId = results[0].id;
-                    console.log('El ID obtenido es:', symbolId);
+                    //console.log('El ID obtenido es:', symbolId);
                     //INSERT INTO Candle
                     const query = `INSERT INTO Candle (id_symbol,  start_time, start_ctm, open_price, close_price, high_price, low_price, volume, quote_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
                     connection.query(query, [symbolId, new Date(data.ctm), data.ctm, data.open, data.close, data.high, data.low, data.vol, data.quoteId], (err, results) => {
